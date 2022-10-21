@@ -1,0 +1,19 @@
+{
+	"name": "MetadataDrivenCopyTask_lge_ControlDS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLlinked_svc",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "MetadataDrivenCopyTask_lge_20221010"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"table": "MainControlTable_nkumar"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

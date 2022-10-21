@@ -1,0 +1,36 @@
+{
+	"name": "dim_emp",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQL482891_linkedsvc_dw",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "eid",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ename",
+				"type": "varchar"
+			},
+			{
+				"name": "salary",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "dname",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "dim_emp"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

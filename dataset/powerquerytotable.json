@@ -1,0 +1,17 @@
+{
+	"name": "powerquerytotable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLlinked_svc",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "PQ_to_Table"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

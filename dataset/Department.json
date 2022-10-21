@@ -1,0 +1,45 @@
+{
+	"name": "Department",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Sql482891_linkedsvc",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"DB_Name": "dbserver482891",
+				"DB_User": "nkumar",
+				"DB_Password": "nkss_1609"
+			}
+		},
+		"parameters": {
+			"tablename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "did",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "dname",
+				"type": "varchar"
+			},
+			{
+				"name": "revenue",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": {
+				"value": "@dataset().tablename",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

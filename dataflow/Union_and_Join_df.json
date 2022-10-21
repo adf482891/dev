@@ -1,0 +1,119 @@
+{
+	"name": "Union_and_Join_df",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Emp1",
+						"type": "DatasetReference"
+					},
+					"name": "File1"
+				},
+				{
+					"dataset": {
+						"referenceName": "Emp2",
+						"type": "DatasetReference"
+					},
+					"name": "File2"
+				},
+				{
+					"dataset": {
+						"referenceName": "Dept",
+						"type": "DatasetReference"
+					},
+					"name": "Dept"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dim_emp",
+						"type": "DatasetReference"
+					},
+					"name": "dimemp"
+				}
+			],
+			"transformations": [
+				{
+					"name": "UnionEmp1withEmp2"
+				},
+				{
+					"name": "JoinwithDept"
+				},
+				{
+					"name": "DeriveCol"
+				},
+				{
+					"name": "DropUnwantedCols"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          empid as integer,",
+				"          empname as string,",
+				"          salary as integer,",
+				"          did as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> File1",
+				"source(output(",
+				"          empid as integer,",
+				"          empname as string,",
+				"          salary as integer,",
+				"          did as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> File2",
+				"source(output(",
+				"          did as integer,",
+				"          dname as string,",
+				"          revenue as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Dept",
+				"File1, File2 union(byName: true)~> UnionEmp1withEmp2",
+				"UnionEmp1withEmp2, DeriveCol join(UnionEmp1withEmp2@did == Dept@did,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JoinwithDept",
+				"Dept derive(dname = initCap(dname)) ~> DeriveCol",
+				"JoinwithDept select(mapColumn(",
+				"          empid,",
+				"          empname,",
+				"          salary,",
+				"          dname",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DropUnwantedCols",
+				"DropUnwantedCols sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          eid as integer,",
+				"          ename as string,",
+				"          salary as integer,",
+				"          dname as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          eid = empid,",
+				"          ename = empname,",
+				"          salary,",
+				"          dname",
+				"     )) ~> dimemp"
+			]
+		}
+	}
+}

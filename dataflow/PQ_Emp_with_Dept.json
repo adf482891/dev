@@ -1,0 +1,20 @@
+{
+	"name": "PQ_Emp_with_Dept",
+	"properties": {
+		"type": "WranglingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"name": "Emp1",
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Emp1",
+					"dataset": {
+						"referenceName": "Emp1",
+						"type": "DatasetReference"
+					}
+				}
+			],
+			"script": "section Section1;\r\nshared Emp1 = let AdfDoc = AzureStorage.DataLakeContents(\"https://dl482891.dfs.core.windows.net/source/emp.csv\"),Csv = Csv.Document(AdfDoc, [Delimiter = \",\", Encoding = TextEncoding.Utf8, QuoteStyle = QuoteStyle.Csv]), PromotedHeaders = Table.PromoteHeaders(Csv, [PromoteAllScalars = true]) in  PromotedHeaders;\r\nshared UserQuery = let Source = #\"Emp1\",\r\n  #\"Changed column type\" = Table.TransformColumnTypes(Source, {{\"empid\", Int64.Type}, {\"salary\", Int64.Type}, {\"did\", Int64.Type}}),\r\n  #\"Removed duplicates\" = Table.Distinct(#\"Changed column type\", {\"empid\"}),\r\n  #\"Inserted merged column\" = Table.AddColumn(#\"Removed duplicates\", \"Eid-Did\", each Text.Combine({Text.From([empid]), Text.From([did])}, \"-\"), type text),\r\n  #\"Capitalized each word\" = Table.TransformColumns(#\"Inserted merged column\", {{\"empname\", each Text.Proper(_), type nullable text}}),\r\n  #\"Trimmed text\" = Table.TransformColumns(#\"Capitalized each word\", {{\"empname\", each Text.Trim(_), type nullable text}}),\r\n  #\"Inserted text length\" = Table.AddColumn(#\"Trimmed text\", \"Length\", each Text.Length([#\"Eid-Did\"]), type number),\r\n  #\"Renamed columns\" = Table.RenameColumns(#\"Inserted text length\", {{\"Length\", \"EIDDIDLen\"}}) in #\"Renamed columns\";\r\n",
+			"documentLocale": "en-us"
+		}
+	}
+}

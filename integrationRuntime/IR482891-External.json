@@ -1,0 +1,7 @@
+{
+	"name": "IR482891-External",
+	"properties": {
+		"type": "SelfHosted",
+		"description": "Integration runtime for external datasets"
+	}
+}

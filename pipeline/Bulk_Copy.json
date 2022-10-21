@@ -1,0 +1,127 @@
+{
+	"name": "Bulk_Copy",
+	"properties": {
+		"description": "Bulk copy data from cogni schema",
+		"activities": [
+			{
+				"name": "ForEach_e2c",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.cw_items",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy_e2c",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "Source",
+									"value": "cogni.@{item().source.table}"
+								},
+								{
+									"name": "Destination",
+									"value": "target//@{item().destination.fileName}"
+								}
+							],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"queryTimeout": "00:10:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"enableSkipIncompatibleRow": true,
+								"validateDataConsistency": true,
+								"logSettings": {
+									"enableCopyActivityLog": true,
+									"copyActivityLogSettings": {
+										"logLevel": "Info",
+										"enableReliableLogging": true
+									},
+									"logLocationSettings": {
+										"linkedServiceName": {
+											"referenceName": "dl482891_linkedsvc",
+											"type": "LinkedServiceReference"
+										},
+										"path": "target"
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "SourceDataset_e2c",
+									"type": "DatasetReference",
+									"parameters": {
+										"cw_table": {
+											"value": "@pipeline().parameters.cw_items",
+											"type": "Expression"
+										},
+										"cw_schema": {
+											"value": "@pipeline().parameters.cw_items",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DestinationDataset_e2c",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"cw_items": {
+				"type": "Array",
+				"defaultValue": [
+					{
+						"source": {
+							"table": "author"
+						},
+						"destination": {
+							"fileName": "cogniauthor.csv"
+						}
+					},
+					{
+						"source": {
+							"table": "book"
+						},
+						"destination": {
+							"fileName": "cognibook.csv"
+						}
+					}
+				]
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-10-07T13:43:18Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

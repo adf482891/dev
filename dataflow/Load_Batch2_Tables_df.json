@@ -1,0 +1,131 @@
+{
+	"name": "Load_Batch2_Tables_df",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "EmployeeFile",
+						"type": "DatasetReference"
+					},
+					"name": "emp"
+				},
+				{
+					"dataset": {
+						"referenceName": "DepartmentFile",
+						"type": "DatasetReference"
+					},
+					"name": "dept"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Batch2Emp",
+						"type": "DatasetReference"
+					},
+					"name": "batch2emp"
+				},
+				{
+					"dataset": {
+						"referenceName": "batch2dept",
+						"type": "DatasetReference"
+					},
+					"name": "batch2dept"
+				}
+			],
+			"transformations": [
+				{
+					"name": "InitCapCol",
+					"description": "Capitalize Department name"
+				},
+				{
+					"name": "JoinWithDepartment",
+					"description": "Fetch Department Name"
+				},
+				{
+					"name": "DropUnwantedCols"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          empid as integer,",
+				"          empname as string,",
+				"          salary as integer,",
+				"          did as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> emp",
+				"source(output(",
+				"          did as integer,",
+				"          dname as string,",
+				"          revenue as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> dept",
+				"dept derive(dname = initCap(dname),",
+				"          targetrevenue = revenue*1.2) ~> InitCapCol",
+				"emp, InitCapCol join(emp@did == dept@did,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JoinWithDepartment",
+				"JoinWithDepartment select(mapColumn(",
+				"          empid,",
+				"          empname,",
+				"          salary,",
+				"          dname",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DropUnwantedCols",
+				"DropUnwantedCols sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          eid as integer,",
+				"          ename as string,",
+				"          salary as integer,",
+				"          dname as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          eid = empid,",
+				"          ename = empname,",
+				"          salary,",
+				"          dname",
+				"     )) ~> batch2emp",
+				"InitCapCol sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          did as integer,",
+				"          dname as string,",
+				"          totalrevenue as integer,",
+				"          targetrevenue as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          did,",
+				"          dname,",
+				"          totalrevenue = revenue,",
+				"          targetrevenue",
+				"     )) ~> batch2dept"
+			]
+		}
+	}
+}

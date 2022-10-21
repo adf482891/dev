@@ -1,0 +1,45 @@
+{
+	"name": "FilterBook",
+	"properties": {
+		"activities": [
+			{
+				"name": "FilterBookByPrice",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "UsingParameterizedFilter",
+						"type": "DataFlowReference",
+						"parameters": {
+							"bookprice": {
+								"value": "@pipeline().parameters.BookPrice",
+								"type": "Expression"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"parameters": {
+			"BookPrice": {
+				"type": "int"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-10-14T11:08:42Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

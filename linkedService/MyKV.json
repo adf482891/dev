@@ -1,0 +1,11 @@
+{
+	"name": "MyKV",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://MyKV482891.vault.azure.net/"
+		}
+	}
+}

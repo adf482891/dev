@@ -1,0 +1,25 @@
+{
+	"name": "Sql482891_linkedsvc",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"parameters": {
+			"DB_Name": {
+				"type": "String",
+				"defaultValue": "dbserver482891"
+			},
+			"DB_User": {
+				"type": "String",
+				"defaultValue": "nkumar"
+			},
+			"DB_Password": {
+				"type": "String",
+				"defaultValue": "nkss_1609"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=db482891.database.windows.net;Initial Catalog=@{linkedService().DB_Name};User ID=@{linkedService().DB_User};Password=@{linkedService().DB_Password}"
+		}
+	}
+}
