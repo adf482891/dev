@@ -1,0 +1,66 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adf482891"
+		},
+		"AzureDataLakeStorage_mainuserls_accountKey": {
+			"value": ""
+		},
+		"AzureSqlDatabase_testuserls_connectionString": {
+			"value": ""
+		},
+		"Databricks_linkedsvc_accessToken": {
+			"value": ""
+		},
+		"SQL482891_linkedsvc_dw_connectionString": {
+			"value": ""
+		},
+		"SQLlinked_svc_connectionString": {
+			"value": ""
+		},
+		"ServicePrincipalLSforDataLake_servicePrincipalCredential": {
+			"value": ""
+		},
+		"Sql482891_linkedsvc_connectionString": {
+			"value": ""
+		},
+		"Synapse_Linkedsvc_connectionString": {
+			"value": ""
+		},
+		"dl482891_linkedsvc_accountKey": {
+			"value": ""
+		},
+		"AzureDataLakeStorage_mainuserls_properties_typeProperties_url": {
+			"value": "https://dl482891.dfs.core.windows.net/"
+		},
+		"MyKV_properties_typeProperties_baseUrl": {
+			"value": "https://MyKV482891.vault.azure.net/"
+		},
+		"ServicePrincipalLSforDataLake_properties_typeProperties_url": {
+			"value": "https://dl482891.dfs.core.windows.net/"
+		},
+		"ServicePrincipalLSforDataLake_properties_typeProperties_tenant": {
+			"value": "dd9f2c76-792e-4e39-9b28-76d4fc2a3901"
+		},
+		"ServicePrincipalLSforDataLake_properties_typeProperties_servicePrincipalId": {
+			"value": "113155ff-ab86-48ee-971d-692be030bba5"
+		},
+		"SqlDB_KeyVault_LS_properties_typeProperties_connectionString_secretName": {
+			"value": "DBPwd"
+		},
+		"dl482891_linkedsvc_properties_typeProperties_url": {
+			"value": "https://dl482891.dfs.core.windows.net/"
+		},
+		"StorageBasedTrigger_properties_CopyFile_parameters_fname": {
+			"value": "dept"
+		},
+		"StorageBasedTrigger_properties_CopyFile_parameters_tname": {
+			"value": "dept"
+		},
+		"StorageBasedTrigger_properties_typeProperties_scope": {
+			"value": "/subscriptions/0324f6f3-b2bf-4d4b-a69c-ae628a6ceb14/resourceGroups/adftraining/providers/Microsoft.Storage/storageAccounts/dl482891"
+		}
+	}
+}

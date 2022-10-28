@@ -1,0 +1,215 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adf482891"
+		},
+		"AzureDataLakeStorage_mainuserls_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage_mainuserls'"
+		},
+		"AzureSqlDatabase_testuserls_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase_testuserls'"
+		},
+		"Databricks_linkedsvc_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'Databricks_linkedsvc'"
+		},
+		"SQL482891_linkedsvc_dw_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SQL482891_linkedsvc_dw'"
+		},
+		"SQLlinked_svc_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SQLlinked_svc'"
+		},
+		"ServicePrincipalLSforDataLake_servicePrincipalCredential": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalCredential' of 'ServicePrincipalLSforDataLake'"
+		},
+		"Sql482891_linkedsvc_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Sql482891_linkedsvc'"
+		},
+		"Synapse_Linkedsvc_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Synapse_Linkedsvc'"
+		},
+		"dl482891_linkedsvc_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'dl482891_linkedsvc'"
+		},
+		"AzureDataLakeStorage_mainuserls_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dl482891.dfs.core.windows.net/"
+		},
+		"MyKV_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://MyKV482891.vault.azure.net/"
+		},
+		"ServicePrincipalLSforDataLake_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dl482891.dfs.core.windows.net/"
+		},
+		"ServicePrincipalLSforDataLake_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "dd9f2c76-792e-4e39-9b28-76d4fc2a3901"
+		},
+		"ServicePrincipalLSforDataLake_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "113155ff-ab86-48ee-971d-692be030bba5"
+		},
+		"SqlDB_KeyVault_LS_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "DBPwd"
+		},
+		"dl482891_linkedsvc_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dl482891.dfs.core.windows.net/"
+		},
+		"StorageBasedTrigger_properties_CopyFile_parameters_fname": {
+			"type": "string",
+			"defaultValue": "dept"
+		},
+		"StorageBasedTrigger_properties_CopyFile_parameters_tname": {
+			"type": "string",
+			"defaultValue": "dept"
+		},
+		"StorageBasedTrigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/0324f6f3-b2bf-4d4b-a69c-ae628a6ceb14/resourceGroups/adftraining/providers/Microsoft.Storage/storageAccounts/dl482891"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "adf482891_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureDataLakeStorage_mainuserls_accountKey": {
+						"value": "[parameters('AzureDataLakeStorage_mainuserls_accountKey')]"
+					},
+					"AzureSqlDatabase_testuserls_connectionString": {
+						"value": "[parameters('AzureSqlDatabase_testuserls_connectionString')]"
+					},
+					"Databricks_linkedsvc_accessToken": {
+						"value": "[parameters('Databricks_linkedsvc_accessToken')]"
+					},
+					"SQL482891_linkedsvc_dw_connectionString": {
+						"value": "[parameters('SQL482891_linkedsvc_dw_connectionString')]"
+					},
+					"SQLlinked_svc_connectionString": {
+						"value": "[parameters('SQLlinked_svc_connectionString')]"
+					},
+					"ServicePrincipalLSforDataLake_servicePrincipalCredential": {
+						"value": "[parameters('ServicePrincipalLSforDataLake_servicePrincipalCredential')]"
+					},
+					"Sql482891_linkedsvc_connectionString": {
+						"value": "[parameters('Sql482891_linkedsvc_connectionString')]"
+					},
+					"Synapse_Linkedsvc_connectionString": {
+						"value": "[parameters('Synapse_Linkedsvc_connectionString')]"
+					},
+					"dl482891_linkedsvc_accountKey": {
+						"value": "[parameters('dl482891_linkedsvc_accountKey')]"
+					},
+					"AzureDataLakeStorage_mainuserls_properties_typeProperties_url": {
+						"value": "[parameters('AzureDataLakeStorage_mainuserls_properties_typeProperties_url')]"
+					},
+					"MyKV_properties_typeProperties_baseUrl": {
+						"value": "[parameters('MyKV_properties_typeProperties_baseUrl')]"
+					},
+					"ServicePrincipalLSforDataLake_properties_typeProperties_url": {
+						"value": "[parameters('ServicePrincipalLSforDataLake_properties_typeProperties_url')]"
+					},
+					"ServicePrincipalLSforDataLake_properties_typeProperties_tenant": {
+						"value": "[parameters('ServicePrincipalLSforDataLake_properties_typeProperties_tenant')]"
+					},
+					"ServicePrincipalLSforDataLake_properties_typeProperties_servicePrincipalId": {
+						"value": "[parameters('ServicePrincipalLSforDataLake_properties_typeProperties_servicePrincipalId')]"
+					},
+					"dl482891_linkedsvc_properties_typeProperties_url": {
+						"value": "[parameters('dl482891_linkedsvc_properties_typeProperties_url')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "adf482891_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"SqlDB_KeyVault_LS_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('SqlDB_KeyVault_LS_properties_typeProperties_connectionString_secretName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adf482891_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "adf482891_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"StorageBasedTrigger_properties_CopyFile_parameters_fname": {
+						"value": "[parameters('StorageBasedTrigger_properties_CopyFile_parameters_fname')]"
+					},
+					"StorageBasedTrigger_properties_CopyFile_parameters_tname": {
+						"value": "[parameters('StorageBasedTrigger_properties_CopyFile_parameters_tname')]"
+					},
+					"StorageBasedTrigger_properties_typeProperties_scope": {
+						"value": "[parameters('StorageBasedTrigger_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adf482891_ArmTemplate_1')]"
+			]
+		}
+	]
+}
