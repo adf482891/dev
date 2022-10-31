@@ -103,7 +103,13 @@
 							"outputs": [
 								{
 									"referenceName": "targettables",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"tname": {
+											"value": "@concat(replace(item().name,'.csv',''))",
+											"type": "Expression"
+										}
+									}
 								}
 							]
 						}

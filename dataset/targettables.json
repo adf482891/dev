@@ -5,6 +5,11 @@
 			"referenceName": "SQLlinked_svc",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"tname": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": []
