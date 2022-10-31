@@ -1,0 +1,78 @@
+{
+	"name": "DL_to_DB_Dataflow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "address",
+						"type": "DatasetReference"
+					},
+					"name": "Address"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AddressDB",
+						"type": "DatasetReference"
+					},
+					"name": "AddressDB"
+				}
+			],
+			"transformations": [
+				{
+					"name": "MergeAddress"
+				},
+				{
+					"name": "DropUnwanted"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          addressid as integer,",
+				"          addressline1 as string,",
+				"          addressline2 as string,",
+				"          city as string,",
+				"          state as string,",
+				"          country as string,",
+				"          pin as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Address",
+				"Address derive(Address = concat(addressline1, ' ', addressline2)) ~> MergeAddress",
+				"MergeAddress select(mapColumn(",
+				"          addressid,",
+				"          Address,",
+				"          city,",
+				"          state,",
+				"          country,",
+				"          pin",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DropUnwanted",
+				"DropUnwanted sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          addressid,",
+				"          Address,",
+				"          city,",
+				"          state,",
+				"          country,",
+				"          pin",
+				"     )) ~> AddressDB"
+			]
+		}
+	}
+}
