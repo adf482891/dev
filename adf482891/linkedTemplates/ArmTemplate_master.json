@@ -191,6 +191,26 @@
 					},
 					"SqlDB_KeyVault_LS_properties_typeProperties_connectionString_secretName": {
 						"value": "[parameters('SqlDB_KeyVault_LS_properties_typeProperties_connectionString_secretName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adf482891_ArmTemplate_1')]"
+			]
+		},
+		{
+			"name": "adf482891_ArmTemplate_3",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_3.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
 					},
 					"TriggerNewFile_properties_StorageEventLoad_parameters_Filename": {
 						"value": "[parameters('TriggerNewFile_properties_StorageEventLoad_parameters_Filename')]"
@@ -201,7 +221,7 @@
 				}
 			},
 			"dependsOn": [
-				"[resourceId('Microsoft.Resources/deployments', 'adf482891_ArmTemplate_1')]"
+				"[resourceId('Microsoft.Resources/deployments', 'adf482891_ArmTemplate_2')]"
 			]
 		}
 	]
