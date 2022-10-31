@@ -1,0 +1,35 @@
+{
+	"name": "NewTarget",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dl482891_linkedsvc",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "target"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "authorid",
+				"type": "String"
+			},
+			{
+				"name": "authorname",
+				"type": "String"
+			},
+			{
+				"name": "contactno",
+				"type": "String"
+			}
+		]
+	}
+}
