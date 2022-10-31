@@ -54,8 +54,8 @@
 						"referenceName": "address",
 						"type": "DatasetReference",
 						"parameters": {
-							"Filename": {
-								"value": "@pipeline().parameters.fname",
+							"fname": {
+								"value": "@pipeline().parameters.Filename",
 								"type": "Expression"
 							}
 						}
@@ -70,7 +70,7 @@
 			}
 		],
 		"parameters": {
-			"fname": {
+			"Filename": {
 				"type": "string"
 			}
 		},
