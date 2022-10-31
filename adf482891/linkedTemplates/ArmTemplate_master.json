@@ -71,15 +71,11 @@
 			"type": "string",
 			"defaultValue": "https://dl482891.dfs.core.windows.net/"
 		},
-		"StorageBasedTrigger_properties_CopyFile_parameters_fname": {
+		"TriggerNewFile_properties_StorageEventLoad_parameters_Filename": {
 			"type": "string",
-			"defaultValue": "dept"
+			"defaultValue": "@triggerbody().filename"
 		},
-		"StorageBasedTrigger_properties_CopyFile_parameters_tname": {
-			"type": "string",
-			"defaultValue": "dept"
-		},
-		"StorageBasedTrigger_properties_typeProperties_scope": {
+		"TriggerNewFile_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/0324f6f3-b2bf-4d4b-a69c-ae628a6ceb14/resourceGroups/adftraining/providers/Microsoft.Storage/storageAccounts/dl482891"
 		},
@@ -172,9 +168,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"SqlDB_KeyVault_LS_properties_typeProperties_connectionString_secretName": {
-						"value": "[parameters('SqlDB_KeyVault_LS_properties_typeProperties_connectionString_secretName')]"
 					}
 				}
 			},
@@ -196,14 +189,14 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"StorageBasedTrigger_properties_CopyFile_parameters_fname": {
-						"value": "[parameters('StorageBasedTrigger_properties_CopyFile_parameters_fname')]"
+					"SqlDB_KeyVault_LS_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('SqlDB_KeyVault_LS_properties_typeProperties_connectionString_secretName')]"
 					},
-					"StorageBasedTrigger_properties_CopyFile_parameters_tname": {
-						"value": "[parameters('StorageBasedTrigger_properties_CopyFile_parameters_tname')]"
+					"TriggerNewFile_properties_StorageEventLoad_parameters_Filename": {
+						"value": "[parameters('TriggerNewFile_properties_StorageEventLoad_parameters_Filename')]"
 					},
-					"StorageBasedTrigger_properties_typeProperties_scope": {
-						"value": "[parameters('StorageBasedTrigger_properties_typeProperties_scope')]"
+					"TriggerNewFile_properties_typeProperties_scope": {
+						"value": "[parameters('TriggerNewFile_properties_typeProperties_scope')]"
 					}
 				}
 			},
