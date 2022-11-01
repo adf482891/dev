@@ -1,0 +1,10 @@
+{
+	"name": "MyTestKV",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://NewKV482891.vault.azure.net/"
+		}
+	}
+}
