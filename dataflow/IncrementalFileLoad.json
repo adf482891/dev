@@ -1,0 +1,60 @@
+{
+	"name": "IncrementalFileLoad",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Emp",
+						"type": "DatasetReference"
+					},
+					"name": "emp"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "TgtEmp",
+						"type": "DatasetReference"
+					},
+					"name": "emptgt",
+					"description": "Export data to Emp"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          empid as integer,",
+				"          empname as string,",
+				"          salary as integer,",
+				"          did as integer,",
+				"          joiningdate as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     enableCdc: true,",
+				"     mode: 'read',",
+				"     skipInitialLoad: false,",
+				"     modifiedAfter: (toTimestamp(1667174400611L))) ~> emp",
+				"emp sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          addressid as string,",
+				"          addressline1 as string,",
+				"          addressline2 as string,",
+				"          city as string,",
+				"          state as string,",
+				"          country as string,",
+				"          pin as string",
+				"     ),",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> emptgt"
+			]
+		}
+	}
+}

@@ -1,0 +1,52 @@
+{
+	"name": "TgtEmp",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dl482891_linkedsvc",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Tgtemp",
+				"fileSystem": "target"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "addressid",
+				"type": "String"
+			},
+			{
+				"name": "addressline1",
+				"type": "String"
+			},
+			{
+				"name": "addressline2",
+				"type": "String"
+			},
+			{
+				"name": "city",
+				"type": "String"
+			},
+			{
+				"name": "state",
+				"type": "String"
+			},
+			{
+				"name": "country",
+				"type": "String"
+			},
+			{
+				"name": "pin",
+				"type": "String"
+			}
+		]
+	}
+}
