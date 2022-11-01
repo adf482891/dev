@@ -1,0 +1,29 @@
+{
+	"name": "DeptTable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLlinked_svc",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "did",
+				"type": "nvarchar"
+			},
+			{
+				"name": "dname",
+				"type": "nvarchar"
+			},
+			{
+				"name": "revenue",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "dept"
+		}
+	}
+}

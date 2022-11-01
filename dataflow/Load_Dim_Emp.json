@@ -1,0 +1,92 @@
+{
+	"name": "Load_Dim_Emp",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Emp",
+						"type": "DatasetReference"
+					},
+					"name": "Emp"
+				},
+				{
+					"dataset": {
+						"referenceName": "DeptTable",
+						"type": "DatasetReference"
+					},
+					"name": "Dept"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable1",
+						"type": "DatasetReference"
+					},
+					"name": "DimEmp"
+				}
+			],
+			"transformations": [
+				{
+					"name": "EmpJoinDept"
+				},
+				{
+					"name": "DropUnwanted"
+				},
+				{
+					"name": "FilterOnSalary"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     Sal as integer",
+				"}",
+				"source(output(",
+				"          empid as integer,",
+				"          empname as string,",
+				"          salary as integer,",
+				"          did as string,",
+				"          joiningdate as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Emp",
+				"source(output(",
+				"          did as string,",
+				"          dname as string,",
+				"          revenue as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> Dept",
+				"Emp, Dept join(Emp@did == Dept@did,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> EmpJoinDept",
+				"EmpJoinDept select(mapColumn(",
+				"          empid,",
+				"          empname,",
+				"          salary,",
+				"          dname",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DropUnwanted",
+				"DropUnwanted filter(salary >= $Sal) ~> FilterOnSalary",
+				"FilterOnSalary sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> DimEmp"
+			]
+		}
+	}
+}
