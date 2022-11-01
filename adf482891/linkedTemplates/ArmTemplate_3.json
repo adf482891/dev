@@ -21,6 +21,371 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/UsingParameterizedFilter')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "book",
+								"type": "DatasetReference"
+							},
+							"name": "book"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "trgbook",
+								"type": "DatasetReference"
+							},
+							"name": "trgbook"
+						}
+					],
+					"transformations": [
+						{
+							"name": "BookPriceFltr"
+						}
+					],
+					"scriptLines": [
+						"parameters{",
+						"     bookprice as integer",
+						"}",
+						"source(output(",
+						"          bookid as integer,",
+						"          bookname as string,",
+						"          price as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> book",
+						"book filter(price>=$bookprice) ~> BookPriceFltr",
+						"BookPriceFltr sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          bookid as integer,",
+						"          bookname as string,",
+						"          price as integer",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          bookid,",
+						"          bookname,",
+						"          price",
+						"     )) ~> trgbook"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/powerquery_emp')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "WranglingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"name": "Emp1",
+							"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Emp1",
+							"dataset": {
+								"referenceName": "Emp1",
+								"type": "DatasetReference"
+							}
+						},
+						{
+							"name": "Dept",
+							"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Dept",
+							"dataset": {
+								"referenceName": "Dept",
+								"type": "DatasetReference"
+							}
+						}
+					],
+					"script": "section Section1;\r\nshared Emp1 = let AdfDoc = AzureStorage.DataLakeContents(\"https://dl482891.dfs.core.windows.net/source/emp.csv\"),Csv = Csv.Document(AdfDoc, [Delimiter = \",\", Encoding = TextEncoding.Utf8, QuoteStyle = QuoteStyle.Csv]), PromotedHeaders = Table.PromoteHeaders(Csv, [PromoteAllScalars = true]),\r\n  #\"Changed column type\" = Table.TransformColumnTypes(PromotedHeaders, {{\"did\", Int64.Type}, {\"empid\", Int64.Type}}) in  #\"Changed column type\";\r\nshared Dept = let AdfDoc = AzureStorage.DataLakeContents(\"https://dl482891.dfs.core.windows.net/source/dept.csv\"),Csv = Csv.Document(AdfDoc, [Delimiter = \",\", Encoding = TextEncoding.Utf8, QuoteStyle = QuoteStyle.Csv]), PromotedHeaders = Table.PromoteHeaders(Csv, [PromoteAllScalars = true]),\r\n  #\"Changed column type\" = Table.TransformColumnTypes(PromotedHeaders, {{\"did\", Int64.Type}, {\"revenue\", Int64.Type}}) in  #\"Changed column type\";\r\nshared UserQuery = let Source = #\"Emp1\",\r\n  #\"Removed duplicates\" = Table.Distinct(Source, {\"empid\"}),\r\n  #\"Inserted merged column\" = Table.AddColumn(#\"Removed duplicates\", \"Eid-Did\", each Text.Combine({Text.From([empid]), Text.From([did])}, \"-\"), type text),\r\n  #\"Capitalized each word\" = Table.TransformColumns(#\"Inserted merged column\", {{\"empname\", each Text.Proper(_), type nullable text}}),\r\n  #\"Trimmed text\" = Table.TransformColumns(#\"Capitalized each word\", {{\"empname\", each Text.Trim(_), type nullable text}}),\r\n  #\"Inserted text length\" = Table.AddColumn(#\"Trimmed text\", \"Length\", each Text.Length([#\"Eid-Did\"]), type number),\r\n  #\"Renamed columns\" = Table.RenameColumns(#\"Inserted text length\", {{\"Length\", \"EIDDIDLen\"}}),\r\n  #\"Merged queries\" = Table.NestedJoin(#\"Renamed columns\", {\"did\"}, Dept, {\"did\"}, \"Dept\", JoinKind.Inner),\r\n  #\"Expanded Dept\" = Table.ExpandTableColumn(#\"Merged queries\", \"Dept\", {\"dname\", \"revenue\"}, {\"dname\", \"revenue\"}) in #\"Expanded Dept\";\r\n",
+					"documentLocale": "en-us"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DL_to_DB_pipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "DLtoDB",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DL_to_DB_Dataflow",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"Address": {
+										"fname": {
+											"value": "@pipeline().parameters.Filename",
+											"type": "Expression"
+										}
+									},
+									"AddressDB": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Coarse"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"Filename": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Dim_Emp_pipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Load_Dim_Emp",
+								"type": "DataFlowReference",
+								"parameters": {
+									"Sal": {
+										"value": "@pipeline().parameters.Salary",
+										"type": "Expression"
+									}
+								},
+								"datasetParameters": {
+									"Emp": {},
+									"Dept": {},
+									"DimEmp": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"Salary": {
+						"type": "int"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FilterBook')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "FilterBookByPrice",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "UsingParameterizedFilter",
+								"type": "DataFlowReference",
+								"parameters": {
+									"bookprice": {
+										"value": "@pipeline().parameters.BookPrice",
+										"type": "Expression"
+									}
+								},
+								"datasetParameters": {
+									"book": {},
+									"trgbook": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"BookPrice": {
+						"type": "int"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-10-14T11:08:42Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/UsingParameterizedFilter')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Load_Dept_Emp_using_dataflow')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Batch2Load",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Load_Batch2_Tables_df",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"emp": {},
+									"dept": {},
+									"batch2emp": {},
+									"batch2dept": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-10-12T12:18:20Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Load_dim_emp')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Load_dim_emp",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Union_and_Join_df",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"File1": {},
+									"File2": {},
+									"Dept": {},
+									"dimemp": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-10-12T11:46:47Z"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/MetadataDrivenCopyTask_lge_MiddleLevel')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",

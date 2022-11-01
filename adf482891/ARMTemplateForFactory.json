@@ -407,6 +407,64 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Dim_Emp_pipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Load_Dim_Emp",
+								"type": "DataFlowReference",
+								"parameters": {
+									"Sal": {
+										"value": "@pipeline().parameters.Salary",
+										"type": "Expression"
+									}
+								},
+								"datasetParameters": {
+									"Emp": {},
+									"Dept": {},
+									"DimEmp": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"Salary": {
+						"type": "int"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/Load_Dim_Emp')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ExecuteDatabrickNotebook')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1759,6 +1817,27 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQLlinked_svc",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Dim_Emp"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SQLlinked_svc')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Batch2Emp')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2055,6 +2134,40 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DeptTable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQLlinked_svc",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "did",
+						"type": "nvarchar"
+					},
+					{
+						"name": "dname",
+						"type": "nvarchar"
+					},
+					{
+						"name": "revenue",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "dept"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SQLlinked_svc')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DestinationDataset_e2c')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2227,6 +2340,27 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/dl482891_linkedsvc')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/EmpDB')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQLlinked_svc",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "emp"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SQLlinked_svc')]"
 			]
 		},
 		{
@@ -2612,6 +2746,63 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/Sql482891_linkedsvc')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TgtEmp')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dl482891_linkedsvc",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Tgtemp",
+						"fileSystem": "target"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "addressid",
+						"type": "String"
+					},
+					{
+						"name": "addressline1",
+						"type": "String"
+					},
+					{
+						"name": "addressline2",
+						"type": "String"
+					},
+					{
+						"name": "city",
+						"type": "String"
+					},
+					{
+						"name": "state",
+						"type": "String"
+					},
+					{
+						"name": "country",
+						"type": "String"
+					},
+					{
+						"name": "pin",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dl482891_linkedsvc')]"
 			]
 		},
 		{
@@ -3295,6 +3486,72 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/IncrementalFileLoad')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Emp",
+								"type": "DatasetReference"
+							},
+							"name": "emp"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "TgtEmp",
+								"type": "DatasetReference"
+							},
+							"name": "emptgt",
+							"description": "Export data to Emp"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(output(",
+						"          empid as integer,",
+						"          empname as string,",
+						"          salary as integer,",
+						"          did as integer,",
+						"          joiningdate as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     enableCdc: true,",
+						"     mode: 'read',",
+						"     skipInitialLoad: false,",
+						"     modifiedAfter: (toTimestamp(1667174400000L))) ~> emp",
+						"emp sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          addressid as string,",
+						"          addressline1 as string,",
+						"          addressline2 as string,",
+						"          city as string,",
+						"          state as string,",
+						"          country as string,",
+						"          pin as string",
+						"     ),",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> emptgt"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Emp')]",
+				"[concat(variables('factoryId'), '/datasets/TgtEmp')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Load_Batch2_Tables_df')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -3431,6 +3688,105 @@
 				"[concat(variables('factoryId'), '/datasets/DepartmentFile')]",
 				"[concat(variables('factoryId'), '/datasets/Batch2Emp')]",
 				"[concat(variables('factoryId'), '/datasets/batch2dept')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Load_Dim_Emp')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Emp",
+								"type": "DatasetReference"
+							},
+							"name": "Emp"
+						},
+						{
+							"dataset": {
+								"referenceName": "DeptTable",
+								"type": "DatasetReference"
+							},
+							"name": "Dept"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable1",
+								"type": "DatasetReference"
+							},
+							"name": "DimEmp"
+						}
+					],
+					"transformations": [
+						{
+							"name": "EmpJoinDept"
+						},
+						{
+							"name": "DropUnwanted"
+						},
+						{
+							"name": "FilterOnSalary"
+						}
+					],
+					"scriptLines": [
+						"parameters{",
+						"     Sal as integer",
+						"}",
+						"source(output(",
+						"          empid as integer,",
+						"          empname as string,",
+						"          salary as integer,",
+						"          did as string,",
+						"          joiningdate as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> Emp",
+						"source(output(",
+						"          did as string,",
+						"          dname as string,",
+						"          revenue as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> Dept",
+						"Emp, Dept join(Emp@did == Dept@did,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> EmpJoinDept",
+						"EmpJoinDept select(mapColumn(",
+						"          empid,",
+						"          empname,",
+						"          salary,",
+						"          dname",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> DropUnwanted",
+						"DropUnwanted filter(salary >= $Sal) ~> FilterOnSalary",
+						"FilterOnSalary sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> DimEmp"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Emp')]",
+				"[concat(variables('factoryId'), '/datasets/DeptTable')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]"
 			]
 		},
 		{
